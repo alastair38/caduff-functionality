@@ -4,8 +4,8 @@
     "fields": [
         {
             "key": "field_651174e966489",
-            "label": "",
-            "name": "",
+            "label": "Authors",
+            "name": "select_authors",
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
@@ -20,7 +20,7 @@
             "add_term": 0,
             "save_terms": 1,
             "load_terms": 1,
-            "return_format": "id",
+            "return_format": "object",
             "field_type": "multi_select",
             "allow_null": 1,
             "multiple": 0
@@ -44,5 +44,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1695643318
+    "modified": 1696265514
 }
