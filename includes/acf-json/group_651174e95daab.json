@@ -19,11 +19,13 @@
             "taxonomy": "contributor",
             "add_term": 0,
             "save_terms": 1,
-            "load_terms": 1,
+            "load_terms": 0,
             "return_format": "object",
             "field_type": "multi_select",
             "allow_null": 1,
-            "multiple": 0
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
         }
     ],
     "location": [
@@ -44,5 +46,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1696265514
+    "modified": 1696271489
 }
