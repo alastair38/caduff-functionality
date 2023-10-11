@@ -51,7 +51,7 @@ foreach ( $categories as $category ) {
   
   </div>
 <?php if($image):?>
-    <img loading="lazy" class="object-cover object-top bg-primary h-48" width="<?php echo $image['sizes']['landscape-width'];?>" height="<?php echo $image['sizes']['landscape-height'];?>" src="<?php echo $image['sizes']['landscape'];?>" alt="<?php echo $image['alt'];?>">
+    <img loading="lazy" class="object-cover object-top bg-primary h-44" width="<?php echo $image['sizes']['landscape-width'];?>" height="<?php echo $image['sizes']['landscape-height'];?>" src="<?php echo $image['sizes']['landscape'];?>" alt="<?php echo $image['alt'];?>">
   <?php 
 
 endif;?>
