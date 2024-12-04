@@ -117,3 +117,52 @@ function blockhaus_add_new_block_category( $block_categories ) {
 }
 
 add_filter( 'block_categories_all', 'blockhaus_add_new_block_category' );
+
+
+add_filter( 'get_block_type_variations', 'blockhaus_block_type_variations', 10, 2 );
+
+function blockhaus_block_type_variations( $variations, $block_type ) {
+	
+	// get the most recent front-page article and use its ID to exclude from the Query loop - Home block variation
+	
+	$args = array(
+		'post_type' => 'post',
+		'numberposts' => 1,
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'label',
+				'field' => 'slug',
+				'terms' => ['front-page'],
+			),
+		),
+	);
+	
+	$latest = get_posts( $args );
+
+	if ( 'core/query' === $block_type->name ) {
+		$variations[] = array(
+			'name'       => 'blockhaus-query-home',
+			'title'      => __( 'Query Loop - Home', 'blockhaus' ),
+			
+			'attributes' => array(
+				'namespace' => 'blockhaus-query-home',
+				'query' => [
+				'postType' => 'post',
+				'taxQuery' => ['label' => [13, 1]],
+				'exclude' => [$latest[0]->ID]]
+			),
+			'isActive'   => array(
+				'namespace' 
+			),
+			'innerBlocks' => [
+				[
+						'core/post-template',
+						
+						[ [ 'core/post-title' ], [ 'core/post-excerpt' ], [ 'core/read-more' ] ],
+				],
+		],
+		);
+	}
+
+	return $variations;
+}
