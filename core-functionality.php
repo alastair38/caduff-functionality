@@ -214,7 +214,7 @@ add_filter( 'rest_post_query', function( $args, $request ) {
 	);
 	
 	// for the editor rendering of blockhaus-query-home block we check the request is for both the 'front-page' and 'featured' labels and then exclude the most recent 'front-page' post from the blockhaus-query-home block
-	if(isset($request["label"]) && ($request["label"] === [10,9])) {
+	if(isset($request["label"]) && ($request["label"] === [13,14])) {
 		$args[ 'tax_query' ] = array(
 			$args[ 'tax_query' ],
 			$tax_query,
