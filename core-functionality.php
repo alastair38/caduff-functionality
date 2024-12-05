@@ -118,26 +118,9 @@ function blockhaus_add_new_block_category( $block_categories ) {
 
 add_filter( 'block_categories_all', 'blockhaus_add_new_block_category' );
 
-
 add_filter( 'get_block_type_variations', 'blockhaus_block_type_variations', 10, 2 );
 
 function blockhaus_block_type_variations( $variations, $block_type ) {
-	
-	// get the most recent front-page article and use its ID to exclude from the Query loop - Home block variation
-	
-	$args = array(
-		'post_type' => 'post',
-		'numberposts' => 1,
-		'tax_query' => array(
-			array(
-				'taxonomy' => 'label',
-				'field' => 'slug',
-				'terms' => ['front-page'],
-			),
-		),
-	);
-	
-	$latest = get_posts( $args );
 
 	if ( 'core/query' === $block_type->name ) {
 		$variations[] = array(
@@ -148,8 +131,8 @@ function blockhaus_block_type_variations( $variations, $block_type ) {
 				'namespace' => 'blockhaus-query-home',
 				'query' => [
 				'postType' => 'post',
-				'taxQuery' => ['label' => [13, 1]],
-				'exclude' => [$latest[0]->ID]]
+				'taxQuery' => ['label' => [13, 14]]],
+				// 'exclude' => [$latest[0]->ID]]
 			),
 			'isActive'   => array(
 				'namespace' 
@@ -166,3 +149,79 @@ function blockhaus_block_type_variations( $variations, $block_type ) {
 
 	return $variations;
 }
+
+add_filter( 'pre_render_block', 'blockhaus_pre_render_block', 10, 2 );
+
+function blockhaus_pre_render_block( $pre_render, $block ) {
+
+	if( isset( $block[ 'attrs' ][ 'namespace' ] ) && 'blockhaus-query-home' === $block[ 'attrs' ][ 'namespace' ] ) {
+
+		add_filter( 'query_loop_block_query_vars', function( $query ) use ( $block ) {
+
+			// for the front-end rendering of blockhaus-query-home we get the most recent front-page post and exclude from the query
+				
+			$args = array(
+				'post_type' => 'post',
+				'numberposts' => 1,
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'label',
+						'field' => 'slug',
+						'terms' => ['front-page'],
+					),
+				),
+			);
+			
+			$latest = get_posts( $args );
+			
+			$query['post__not_in'] = [$latest[0]->ID];
+
+			return $query;
+
+		});
+
+	}
+
+	return $pre_render;
+
+}
+
+add_filter( 'rest_post_query', function( $args, $request ) {
+
+	$postArgs = array(
+		'post_type' => 'post',
+		'numberposts' => 1,
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'label',
+				'field' => 'slug',
+				'terms' => ['front-page'],
+			),
+		),
+	);
+	
+	$latest = get_posts( $postArgs );
+	
+
+	// our custom tax query for filtering
+	
+	$tax_query = array(
+		array(
+			'taxonomy' => 'label',
+			'field' => 'slug',
+			'terms' => ['front-page', 'featured'],
+		),
+	);
+	
+	// for the editor rendering of blockhaus-query-home block we check the request is for both the 'front-page' and 'featured' labels and then exclude the most recent 'front-page' post from the blockhaus-query-home block
+	if(isset($request["label"]) && ($request["label"] === [10,9])) {
+		$args[ 'tax_query' ] = array(
+			$args[ 'tax_query' ],
+			$tax_query,
+		);
+		$args['post__not_in'] = [$latest[0]->ID];
+	}
+
+	return $args;
+
+}, 10, 2 );
